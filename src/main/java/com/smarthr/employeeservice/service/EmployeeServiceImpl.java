@@ -114,12 +114,12 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     @Transactional(readOnly = true)
     public Page<EmployeeDto> searchEmployees(String keyword, Long departmentId, String status, Pageable pageable) {
-        return employeeRepository.searchEmployees(
-                (keyword != null && !keyword.isBlank()) ? keyword.trim() : null,
-                departmentId,
-                (status != null && !status.isBlank()) ? status.trim() : null,
-                pageable
-        ).map(this::mapToDto);
+        String cleanKeyword = (keyword != null && !keyword.isBlank()) ? keyword.trim() : null;
+        String cleanStatus = (status != null && !status.isBlank()) ? status.trim() : null;
+        if (cleanKeyword == null && departmentId == null && cleanStatus == null) {
+            return employeeRepository.findAll(pageable).map(this::mapToDto);
+        }
+        return employeeRepository.searchEmployees(cleanKeyword, departmentId, cleanStatus, pageable).map(this::mapToDto);
     }
 
     private EmployeeDto mapToDto(Employee employee) {

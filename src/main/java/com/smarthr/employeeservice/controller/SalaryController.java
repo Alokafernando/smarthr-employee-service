@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/salaries")
 @RequiredArgsConstructor
@@ -15,6 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class SalaryController {
 
     private final SalaryService salaryService;
+
+    @GetMapping
+    @Operation(summary = "Get all salary records")
+    public ResponseEntity<List<SalaryDto>> getAllSalaries(
+            @RequestParam(required = false) Integer month,
+            @RequestParam(required = false) Integer year) {
+        return ResponseEntity.ok(salaryService.getAllSalaries(month, year));
+    }
 
     @GetMapping("/{employeeId}")
     @Operation(summary = "Get salary details for an employee")

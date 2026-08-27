@@ -20,12 +20,13 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     long countByDepartmentId(Long departmentId);
 
     @Query("SELECT e FROM Employee e WHERE " +
-            "(:keyword IS NULL OR LOWER(e.firstName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "OR LOWER(e.lastName) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "OR LOWER(e.email) LIKE LOWER(CONCAT('%', :keyword, '%')) " +
-            "OR LOWER(e.employeeNumber) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "(:keyword IS NULL OR :keyword = '' OR " +
+            "LOWER(e.firstName) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "OR LOWER(e.lastName) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "OR LOWER(e.email) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%')) " +
+            "OR LOWER(e.employeeNumber) LIKE LOWER(CONCAT('%', CAST(:keyword AS string), '%'))) " +
             "AND (:departmentId IS NULL OR e.departmentId = :departmentId) " +
-            "AND (:status IS NULL OR e.employmentStatus = :status)")
+            "AND (:status IS NULL OR :status = '' OR e.employmentStatus = :status)")
     Page<Employee> searchEmployees(@Param("keyword") String keyword,
                                   @Param("departmentId") Long departmentId,
                                   @Param("status") String status,

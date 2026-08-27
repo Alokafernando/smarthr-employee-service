@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +20,13 @@ public class SalaryServiceImpl implements SalaryService {
 
     private final SalaryRepository salaryRepository;
     private final EmployeeRepository employeeRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SalaryDto> getAllSalaries(Integer month, Integer year) {
+        List<Employee> employees = employeeRepository.findAll();
+        return employees.stream().map(emp -> getSalaryByEmployeeId(emp.getId())).toList();
+    }
 
     @Override
     @Transactional(readOnly = true)
